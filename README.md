@@ -1,16 +1,14 @@
 
-# Mover - Workspace ONE Migration Tool for Windows
-
-
+# Mover - Workspace ONE Migration Tool for Windows  
 
 # Overview
-
 Mover is a tool for Workspace ONE Administrators that can be configured to facilitate an automated migration of a Windows device from either between two different Workspace ONE UEM Environments or have the same device re-enroll back into the _same_ UEM environment for user account/Directory changes and/or migrations.
 
 **Mover now also supports migrating a Windows device managed by Microsoft Intune to Workspace ONE.**
 
-Migrating a device managed by Intune has currently been tested for devices enrolled into Intune using OOBE. This process also leaves the device joined to **Azure Active Directory** and will remove all **Intune** CSPs and configurations. Applications that are deployed via Intune **are not** removed when migrating, as this is a limitation of Intune's software deployment capabilities. As is in Microsoft's documentation, if you want to remove applications before migration you must uninstall them first.
+Migrating a device managed by Intune has currently been tested for devices enrolled into Intune using OOBE. This process also leaves the device joined to **Azure Active Directory** and will remove all **Intune** CSPs and configurations. Applications that are deployed via Intune **are not** removed when migrating, as this is a limitation of Intune's software deployment capabilities. As is in Microsoft's documentation, if you want to remove applications before migration you must uninstall them first.  
 
+  
 
 # High Level Process  
 
@@ -48,12 +46,11 @@ The device is now ready for the end user to log in to and complete the device re
 # Downloads
 The latest version of Mover is available here:
 
-# Requirements
+# Environment Requirements  
 
-## Environment Details
-___
-If migrating from **Workspace ONE UEM** to **Workspace ONE UEM**:
-
+> [!NOTE]
+> If migrating from **Workspace ONE UEM** to **Workspace ONE UEM**:
+>
 -   Workspace ONE UEM Administrator accounts for both the **source** and **destination** environments, with permissions to manage staging accounts and devices
 
 -   The _source_ Workspace ONE UEM Administrator account isn't _necessary_ but is useful for ensuring a successful migration.
@@ -61,18 +58,17 @@ If migrating from **Workspace ONE UEM** to **Workspace ONE UEM**:
 -   Staging account credentials for the **destination Workspace ONE UEM** environment
 -   **Workspace ONE UEM Destination** environment Organization Group ID & Device Services URL (eg. [https://ds1234.awmdm.com)](https://ds1234.awmdm.com))
 -   Ability to deploy **Mover** on the device, or if completing manually, the ability to run mover_install.exe as an Administrator on the device
-
-___
-If migrating from **Microsoft Intune** to **Workspace ONE UEM**:
-
+  
+> [!NOTE]
+> If migrating from **Microsoft Intune** to **Workspace ONE UEM**:
+>
 -   Administrator account for the **source** **Intune** Management Console.
 -   Administrator account for the **destination** **Workspace ONE Environment**, with permissions to manage staging accounts and devices.
 -   Staging account credentials for the **destination** **Workspace ONE UEM** environment
 -   **Destination** environment Organization Group ID & Device Services URL (eg. [https://ds1234.awmdm.com)](https://ds1234.awmdm.com))
 -   Intune permissions to deploy **Mover** on the device using the Win32 App deployment capabilities, or if completing manually, the ability to run mover_install.exe as an Administrator on the device.
-___
 
-# Device Requirements
+  # Device Requirements
 
 
 -   Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub
@@ -140,11 +136,10 @@ _Set the Install Complete criteria to be file exists = C:\Recovery\OEM\Mover\mov
 
 <![if !vml]>![](file:///C:/Users/plindley/AppData/Local/Temp/msohtmlclip1/01/clip_image010.png)<![endif]>
 
-### IMPORTANT:
+> [!WARNING]
+> As soon as you assign this application and the device receives the installation command, **the device will start the migration immediately**.
 
-As soon as you assign this application and the device receives the installation command, **the device will start the migration immediately**.
-
-**Intune**
+### Intune
 
 Once you have configured the appsettings.json file, combine all the Mover files into a single directory.
 
@@ -154,10 +149,8 @@ When using the tool, the **source** directory is the whole Mover directory. The 
 
 Now upload the .intunewin file to your Intune Management Console using the below settings:
 
-
-### IMPORTANT:
-
-Take note of your assignment settings here. The above example sets this as **Available** which shows it in the Catalog but the user needs to "install" it to initate the migration. If you want to control the migration, add the devices to be migrated to the "required" section in phases etc.
+> [!WARNING]
+> Take note of your assignment settings here. The above example sets this as **Available** which shows it in the Catalog but the user needs to "install" it to initate the migration. If you want to control the migration, add the devices to be migrated to the "required" section in phases etc.
 
 As soon as you assign this application as **required**, or when the user initiates the install of the App, once the device receives the installation command, **the device will start the migration immediately**.
 
