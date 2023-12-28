@@ -51,6 +51,7 @@ The latest version of Mover is available here:
 # Requirements
 
 ## Environment Details
+___
 If migrating from **Workspace ONE UEM** to **Workspace ONE UEM**:
 
 -   Workspace ONE UEM Administrator accounts for both the **source** and **destination** environments, with permissions to manage staging accounts and devices
