@@ -82,7 +82,11 @@ The latest version of Mover is available here:
 
 # Usage Instructions
 
-The interface is customizable by editing the "UI" section of the **appsettings.json** file (see below). Customers can also add their own **logo.png** file to the root directory to add their company logo, or remove it completely.
+The interface is customizable by editing the "UI" section of the **appsettings.json** file (see below).  
+
+![mover customization](https://raw.githubusercontent.com/tbwfdu/mover/main/images/mover.png)
+
+Customers can also add their own **logo.png** file to the root directory to add their company logo, or remove it completely.
 
 
 
@@ -90,9 +94,12 @@ The interface is customizable by editing the "UI" section of the **appsettings.j
 
 Before deploying the files to the endpoint, or running the migrate_install.exe **adjust** the included **appsettings.json** file and update the following parameters:
 
+![appsettings customization](https://raw.githubusercontent.com/tbwfdu/mover/main/images/appsettings.png)
+
 Under “**Settings**”:
 
-_Note: These are all for the destination environment._
+> [!NOTE]
+> These are all for the destination environment.
 
 **Username:** Replace with your staging account username
 
@@ -123,18 +130,20 @@ If you want to **add** a different company logo, add a new file called logo.png
 Once you have configured the **appsettings.json** file, combine all the Mover files into a single .zip file.
 
 You can then deploy this .zip file as a **Native Internal Application** in Workspace ONE UEM where the device is **currently** enrolled. After uploading the .zip file, use the following settings:
+> [!NOTE]
+> _Set the Install Command to be mover_install.exe_
 
-_Set the Install Command to be mover_install.exe_
+![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install1.png)
 
-<![if !vml]>![](file:///C:/Users/plindley/AppData/Local/Temp/msohtmlclip1/01/clip_image006.png)<![endif]>
+> [!NOTE]
+> _Set the Uninstall Command to be rm -force C:\Recovery\OEM\Mover_
 
-_Set the Uninstall Command to be rm -force C:\Recovery\OEM\Mover_
+![uninstall command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install2.png)
 
-<![if !vml]>![](file:///C:/Users/plindley/AppData/Local/Temp/msohtmlclip1/01/clip_image008.png)<![endif]>
+> [!NOTE]
+> _Set the Install Complete criteria to be file exists = C:\Recovery\OEM\Mover\mover.exe_
 
-_Set the Install Complete criteria to be file exists = C:\Recovery\OEM\Mover\mover.exe_
-
-<![if !vml]>![](file:///C:/Users/plindley/AppData/Local/Temp/msohtmlclip1/01/clip_image010.png)<![endif]>
+![install criteria](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install3.png)
 
 > [!WARNING]
 > As soon as you assign this application and the device receives the installation command, **the device will start the migration immediately**.
@@ -145,9 +154,14 @@ Once you have configured the appsettings.json file, combine all the Mover files 
 
 If you do not have the **Intune Win32 Content Prep Tool** you can download it [here.](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool) This is used for creating the .intunewin file for uploading to the Intune console.
 
-When using the tool, the **source** directory is the whole Mover directory. The **install command** will be mover_install.exe.
+> [!IMPORTANT]
+> When using the tool, the **source** directory is the whole Mover directory. The **install command** will be mover_install.exe.
 
 Now upload the .intunewin file to your Intune Management Console using the below settings:
+
+![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/intuneinstall1.png)
+
+![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/intuneinstall2.png)
 
 > [!WARNING]
 > Take note of your assignment settings here. The above example sets this as **Available** which shows it in the Catalog but the user needs to "install" it to initate the migration. If you want to control the migration, add the devices to be migrated to the "required" section in phases etc.
