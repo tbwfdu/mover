@@ -46,6 +46,8 @@ The device is now ready for the end user to log in to and complete the device re
 # Downloads
 The latest version of Mover is available here:
 
+[Download Mover](https://github.com/tbwfdu/mover/releases/download/v1.2-beta/Mover_v1.2b.zip)
+
 # Environment Requirements  
 
 > [!NOTE]
