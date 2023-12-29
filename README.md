@@ -44,9 +44,9 @@ After verifying that re-enrollment has successfully completed, **Mover** will re
 The device is now ready for the end user to log in to and complete the device reassignment process by authenticating with their credentials in Intelligent Hub.
 
 # Downloads
-The latest version of Mover is available here:
+The latest version of Mover is [available here](https://github.com/tbwfdu/mover/releases/download/v1.2-beta/Mover_v1.2b.zip)
 
-[Download Mover](https://github.com/tbwfdu/mover/releases/download/v1.2-beta/Mover_v1.2b.zip)
+
 
 # Environment Requirements  
 
