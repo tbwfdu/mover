@@ -44,7 +44,7 @@ After verifying that re-enrollment has successfully completed, **Mover** will re
 The device is now ready for the end user to log in to and complete the device reassignment process by authenticating with their credentials in Intelligent Hub.
 
 # Downloads
-The latest version of Mover is [available here](https://github.com/tbwfdu/mover/releases/download/v1.2-beta/Mover_v1.2b.zip)
+The latest version of Mover is [available here](https://github.com/tbwfdu/mover/releases)
 
 
 
@@ -118,6 +118,22 @@ Under “**Settings**”:
 **RebootTime:** Not currently used
 
 **MdmSource:** Specifies the source MDM to determine how to migrate the device
+
+**RebootOnCompletion:**   Specifies if the device should reboot once migration (usually always true)
+
+**ForceCleanup:** (NEW)  If set to true, Mover will remove all registry references and scheduled tasks as if the device has never been migrated. Useful for when a device fails to migrate successfully or you need to migrate a subsequent time
+
+**AdminAccountDetails:**  (NEW)
+
+  **IsRenamed:**   If set to true, allows you to specify the Administrator username and password (below). Useful if you are renaming the 'Administrator' account on the Windows endpoint, or are unable to enable it. If true, you must set the AdminUsername below.
+
+  **UseExistingPassword:**   If true, Mover will not generate a new random password for the Administrator account. If setting this as true you must configure the AdminPassword below.
+
+  **AdminUsername:**  The username to the Admin Account to autologin as.
+
+  **AdminPassword:**   The passwordto the Admin Account to autologin as.
+
+  **DisableRenamedAccountAfterMigration:**   Whether or not to disable the account specified above. This allows you to use a renamed account (which may or may not be disabled), have Mover enable it for migration and then disable it again after migration.
 
 _You can also adjust the text that is displayed in the UI in the same **appsettings.json** file._
 
