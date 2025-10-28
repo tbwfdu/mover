@@ -1,0 +1,34 @@
+<header>
+	<div class="logo">
+		<div class="appIconShadow">
+			{% if page.url != '/' %}
+				<a href="../" target="_self"><img class="headerIcon" src="{{ site.app_icon | relative_url }}"></a>
+			{% else %}
+				<img class="headerIcon" src="{{ site.app_icon | relative_url }}">
+			{% endif %}
+			<div class="divider"></div>
+		</div>
+		<p class="headerName">{{ site.app_name }}</p>
+	</div>
+	<nav class="scroll">
+		<ul>
+            {% assign sorted_pages = site.pages | sort:"order" %}
+			{% for page in sorted_pages %}
+				{% if page.include_in_header == true %}
+				<li><a href="{{ page.url | relative_url }}" target="_self">{{ page.title }}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+        
+	</nav>
+    {% if page.url == '/' %}
+    <div class="dblAllAppsColumn">
+        <a href="https://dropbearlabs.net" target="_self">
+            <img class="dblHeaderIcon" src="{{ site.dbl_icon | relative_url }}">
+            <div class="dblAllAppsRow">
+                <p>All Apps</p> <i style="padding-left: 1px" class="fa fa-arrow-right"></i>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+</header>

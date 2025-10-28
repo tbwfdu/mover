@@ -1,0 +1,172 @@
+---
+# Front matter comment to ensure Jekyll properly reads file.
+---
+
+$body-color: {{ site.body_background_color }};
+
+$header-image: "{{ site.cover_image }}";
+$device-os: "assets/{{ site.device_os }}.png";
+
+$accent-color: {{ site.link_color }};
+
+$header-title-color: {{ site.topbar_title_color }};
+$app-title-color: {{ site.app_title_color }};
+$app-price-color: {{ site.app_price_color }};
+$app-description-color: {{ site.app_description_color }};
+
+$feature-title-color: {{ site.feature_title_color }};
+$feature-text-color: {{ site.feature_text_color }};
+$footer-text-color: {{ site.footer_text_color }};
+
+$header_color: {{ site.topbar_color }};
+$header_transparency: {{ site.topbar_transparency }};
+
+$image-overlay-color: {{ site.cover_overlay_color }};
+$image-overlay-transparency: {{ site.cover_overlay_transparency }};
+
+$feature-icons-foreground-color: {{ site.feature_icons_foreground_color }};
+$feature-icons-background-color: {{ site.feature_icons_background_color }};
+
+$social-icons-foreground-color: {{ site.social_icons_foreground_color }};
+$social-icons-background-color: {{ site.social_icons_background_color }};
+
+$windows-icon-color: {{ site.windows_icon_color }};
+$apple-icon-color: {{ site.apple_icon_color }};
+
+
+
+
+/* Dropdown navigation styles */
+.dropdown-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dropdown-nav li {
+  position: relative;
+}
+/* Hide the submenu by default */
+.dropdown-nav .dropdown-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  min-width: 160px;
+  background-color: transparent;
+  z-index: 1000;
+}
+/* Show submenu when the parent is hovered */
+.dropdown-nav li:hover > .dropdown-menu {
+  display: block;
+}
+/* Style submenu links */
+.dropdown-nav .dropdown-menu li {
+  margin: 0;
+}
+.dropdown-nav .dropdown-menu li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: rgba($header-title-color, 0.6);
+}
+
+.dropdown-nav .dropdown-menu li a:hover,
+.dropdown-menu nav > ul li a:active {
+  text-decoration: none;
+  color: rgba($header-title-color, 1);
+}
+
+.nav-layout {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  align-items: center;
+  height: 115px;
+  //margin-left: 15px;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.dropdown-menu nav > ul li a:hover,
+.dropdown-menu nav > ul li a:active {
+  text-decoration: none;
+  color: rgba($header-title-color, 1);
+}
+
+/*@media only screen and (max-width: 900px) {
+
+  .nav-layout {
+    display: none;
+  }
+
+} */
+
+
+
+
+
+
+/* Small Menu Dropdown navigation styles */
+.dropdown-nav-sml ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dropdown-nav-sml li {
+  position: relative;
+}
+/* Hide the submenu by default */
+.dropdown-nav-sml .dropdown-menu-sml {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  min-width: 160px;
+  background-color: transparent;
+  z-index: 1000;
+}
+/* Show submenu when the parent is hovered */
+.dropdown-nav-sml li:hover > .dropdown-menu-sml {
+  display: block;
+}
+/* Style submenu links */
+.dropdown-nav-sml .dropdown-menu-sml li {
+  margin: 0;
+}
+.dropdown-nav-sml .dropdown-menu-sml li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: rgba($header-title-color, 0.6);
+}
+
+.dropdown-nav-sml .dropdown-menu-sml li a:hover,
+.dropdown-menu-sml nav > ul li a:active {
+  text-decoration: none;
+  color: rgba($header-title-color, 1);
+}
+
+.nav-layout-sml {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  height: 115px;
+  //margin-left: 15px;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.dropdown-menu-sml nav > ul li a:hover,
+.dropdown-menu-sml nav > ul li a:active {
+  text-decoration: none;
+  color: rgba($header-title-color, 1);
+}
+
+
+
+@import 
+    "base",
+    "layout",
+    "github-markdown"

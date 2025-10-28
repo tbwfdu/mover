@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title class="pageTitle">Mover</title>
+	<meta name="description" content="MDM Device Migration Utility">
+
+	<link rel="shortcut icon" href="/assets/mover.png">
+
+	<!-- Smart App Banner -->
+	
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+	<link rel="stylesheet" href="/main.css">
+</head>
+
+<body class="subPageBody">
+    <div class="headerBackground subPageHeaderBackground">
+        <div class="subContainer subPageContainer">
+        <header>
+	<div class="logo">
+		<div class="appIconShadow">
+			
+				<a href="../" target="_self"><img class="headerIcon" src="/assets/mover.png"></a>
+			
+			<div class="divider"></div>
+		</div>
+		<p class="headerName">Mover</p>
+	</div>
+	<nav class="scroll">
+		<ul>
+            
+			
+				
+				<li><a href="/gettingstarted/" target="_self">Getting Started</a></li>
+				
+			
+				
+				<li><a href="/usage/" target="_self">Usage</a></li>
+				
+			
+				
+				<li><a href="/faq/" target="_self">FAQs</a></li>
+				
+			
+		</ul>
+        
+	</nav>
+    
+</header>
+            <article class="page markdown-body">
+                <h1 id="getting-started">Getting Started</h1>
+
+<p>Mover is a tool for Workspace ONE Administrators that can be configured to facilitate an automated migration of a Windows device from either between two different Workspace ONE UEM Environments or have the same device re-enroll back into the <em>same</em> UEM environment for user account/Directory changes and/or migrations.</p>
+
+<p><strong>Mover also supports migrating a Windows device managed by Microsoft Intune to Workspace ONE.</strong></p>
+
+<p>Migrating a device managed by Intune has currently been tested for devices enrolled into Intune using OOBE. This process also leaves the device joined to <strong>Azure Active Directory</strong> and will remove all <strong>Intune</strong> CSPs and configurations. Applications that are deployed via Intune <strong>are not</strong> removed when migrating, as this is a limitation of Intune’s software deployment capabilities. As is in Microsoft’s documentation, if you want to remove applications before migration you must uninstall them first.</p>
+
+<h2 id="high-level-process">High Level Process</h2>
+
+<p>Below is a brief overview of the processes and tasks that Mover completes to migrate a device</p>
+
+<ul>
+  <li>
+    <p>A Workspace ONE Administrator downloads the <strong>Mover</strong> installer and installs it locally on <em>their</em> PC to do the initial configuration.</p>
+  </li>
+  <li>Once installed, there will be two executables in the destination directory:
+    <h3 id="moverexe">Mover.exe</h3>
+    <ul>
+      <li>The shell that facilitates the migration tasks and is used on the device <strong>to be migrated</strong></li>
+    </ul>
+
+    <h3 id="moveradminexe">MoverAdmin.exe</h3>
+    <ul>
+      <li>Used by the Workspace ONE Administrator to generate the settings.json file used for migration</li>
+      <li>Called remotely by the source MDM and configures the device <strong>to be migrated</strong> with the settings in the settings.json file created by the Administrator<br />
+<br /></li>
+    </ul>
+  </li>
+  <li>A Workspace ONE Administrator then deploys <strong>Mover</strong> (both executables + settings.json) to the Windows endpoint to be migrated.
+    <ul>
+      <li>This can be done at any time to prepare the device for the migration.</li>
+    </ul>
+  </li>
+  <li>
+    <p>When the Administrator is ready to migrate the device, a remote command is sent to the device <em>(via script, logon script, scheduled task etc.)</em> that calls:</p>
+
+    <blockquote>
+      <p><strong>“Mover_Admin.exe –initiate-migration”</strong></p>
+    </blockquote>
+  </li>
+  <li>This will then prepare the endpoint for the migration, reboot the device and migrate the device from the source MDM to the destination MDM automatically.</li>
+</ul>
+
+<h2 id="environment-requirements">Environment Requirements</h2>
+
+<h3 id="ℹ️-if-migrating-from-workspace-one-uem-to-workspace-one-uem">ℹ️ If migrating from <strong>Workspace ONE UEM</strong> to <strong>Workspace ONE UEM</strong>:</h3>
+
+<ul>
+  <li>
+    <p>Workspace ONE UEM Administrator accounts for both the <strong>source</strong> and <strong>destination</strong> environments, with permissions to manage staging accounts and devices</p>
+  </li>
+  <li>
+    <p>The <em>source</em> Workspace ONE UEM Administrator account isn’t <em>necessary</em> but is useful for ensuring a successful migration.</p>
+  </li>
+  <li>Staging account credentials for the <strong>destination Workspace ONE UEM</strong> environment</li>
+  <li><strong>Workspace ONE UEM Destination</strong> environment Organization Group ID &amp; Device Services URL (eg. <a href="https://ds1234.awmdm.com">https://ds1234.awmdm.com)</a>)</li>
+  <li>Ability to deploy <strong>Mover</strong> on the device, or if completing manually, the ability to run mover_install.exe as an Administrator on the device</li>
+</ul>
+
+<h3 id="ℹ️-if-migrating-from-microsoft-intune-to-workspace-one-uem">ℹ️ If migrating from <strong>Microsoft Intune</strong> to <strong>Workspace ONE UEM</strong>:</h3>
+
+<ul>
+  <li>Administrator account for the <strong>source</strong> <strong>Intune</strong> Management Console.</li>
+  <li>Administrator account for the <strong>destination</strong> <strong>Workspace ONE Environment</strong>, with permissions to manage staging accounts and devices.</li>
+  <li>Staging account credentials for the <strong>destination</strong> <strong>Workspace ONE UEM</strong> environment</li>
+  <li><strong>Destination</strong> environment Organization Group ID &amp; Device Services URL (eg. <a href="https://ds1234.awmdm.com">https://ds1234.awmdm.com)</a>)</li>
+  <li>Intune permissions to deploy <strong>Mover</strong> on the device using the Win32 App deployment capabilities, or if completing manually, the ability to run mover_install.exe as an Administrator on the device.</li>
+</ul>
+
+<h2 id="device-requirements">Device Requirements</h2>
+
+<ul>
+  <li>Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub</li>
+  <li>End Users <strong>do not</strong> need to be Administrators on the devices being migrated</li>
+  <li>The <strong>Mover_Admin.exe</strong> process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task</li>
+  <li>Connectivity to the target environment is <strong>mandatory</strong> and internet connectivity is required to download the AirwatchAgent.msi</li>
+  <li>If you require a specific version of Intelligent Hub/Airwatch Agent, or if the endpoint <em>does not</em> have internet access, ensure you place the required version of AirwatchAgent.msi in the root folder during installation.</li>
+</ul>
+
+            </article>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+
+    </div>
+</body>
+
+</html>

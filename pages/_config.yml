@@ -1,0 +1,88 @@
+#page title
+page_title                                : Mover                                     # Automatically populates with app name if not set and if iOS app ID is set. Otherwise enter manually.
+github_link                               : https://github.com/tbwfdu/mover/releases  # Enter link to GitHub repository.
+app_icon                                  : assets/mover.png                          # Automatically populates if not set and if iOS app ID is set.  Otherwise enter path to icon file manually.
+dbl_icon                                  : assets/dbl.png
+app_name                                  : Mover                                     # Automatically populates if not set and if iOS app ID is set.  Otherwise enter manually.
+app_os                                    : windows                                     # Enter supported OS platforms - windows or apple
+app_description                           : MDM Device Migration Utility
+app_os_title                              : Windows
+
+# Information About Yourself
+your_name                                 : Pete Lindley                                
+your_link                                 : https://github.com/tbwfdu                     
+your_city                                 : Down Under, Australia                                
+email_address                             : thisispete@gmail.com
+github_username                           : tbwfdu
+
+# Feature List
+features                                  :
+
+  - title                                 : Automated Windows Device Migration
+    description                           : Automate the MDM migration of your Windows devices to Workspace ONE UEM from Microsoft Intune
+    fontawesome_icon_name                 : laptop-code
+    
+  - title                                 : Migrate Between Workspace ONE Environments
+    description                           : Automate the re-enrollment of Windows devices between different Workspace ONE UEM Tenants
+    fontawesome_icon_name                 : cloud
+
+  - title                                 : Retain Entra ID Join
+    description                           : When migrating from Intune to Workspace ONE UEM, Mover keeps the device joined to your Entra ID Domain.
+    fontawesome_icon_name                 : id-card
+
+# Theme Settings
+topbar_color                              : "#000000"
+topbar_transparency                       : 0.1
+topbar_title_color                        : "#ffffff"
+
+cover_image                               : assets/headerimage.png              # Replace with alternative image path or image URL.
+cover_overlay_color                       : "#363b3d"
+cover_overlay_transparency                : 0.8
+
+device_os                                 : windows                                     # Set to: macos or windows
+
+body_background_color                     : "#ffffff"
+
+link_color                                : "#1d63ea"
+
+app_title_color                           : "#ffffff"
+app_price_color                           : "#ffffff"
+app_description_color                     : "#ffffff"
+
+feature_title_color                       : "#000000"
+feature_text_color                        : "#666666"
+
+feature_icons_foreground_color            : "#1d63ea"
+feature_icons_background_color            : "#e6e6e6"
+
+social_icons_foreground_color             : "#666666"
+social_icons_background_color             : "#e6e6e6"
+
+windows_icon_color                        : "#0078D4"
+apple_icon_color                          : "#666666"
+
+footer_text_color                         : "#666666"
+
+####################################################
+### Jekyll Configuration. No need to touch this. ###
+####################################################
+
+# Set the Sass partials directory, as we're using @imports
+sass:
+  style: :compressed # You might prefer to minify using :compressed
+
+# Exclude these files from your production _site
+exclude:
+  - LICENSE
+  - README.md
+  - CNAME
+
+collections:
+  pages:
+    output: true
+    permalink: /:path/
+
+# Markdown rendering
+markdown: kramdown
+kramdown:
+  toc_levels: 1..6
