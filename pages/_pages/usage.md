@@ -18,15 +18,17 @@ order: 2
 
 ## Creating the settings.json Config File
 
-New in Mover 2.0+, you can now use the Mover_Admin.exe file to generate and validate the configuration settings used during the Mover migration process.
+New in Mover 2.0+, you can now use the MoverAdmin.exe file to generate and validate the configuration settings used during the Mover migration process.
 
-Opening **Mover_Admin.exe** presents you with a series of screens that walks you through providing the required information and at the end will validate the correct combinations of settings and if correct will generate a settings.json file.
+Opening **MoverAdmin.exe** presents you with a series of screens that walks you through providing the required information and at the end will validate the correct combinations of settings and if correct will generate a settings.json file.
+
+![Alt text](../assets/images/OpenOrCreate.png "Open or Create a settings file")
 
 ![Alt text](../assets/images/MoverAdminEnvSettings.png "Mover Admin Screenshot")
 
 >### ⚠️ Important
 >{: .no_toc }
-> **Mover_Admin.exe** also accepts arguments when being started. 
+> **MoverAdmin.exe** also accepts arguments when being started. 
 > 
 > You should **only** specify --initiate-migration as an argument when intending to start a real-world migration of the device
 >
@@ -115,28 +117,22 @@ Similarly, if you open MoverAdmin and there's an existing settings.json file, it
 
 After configuring your settings.json file, you now need to deliver `Mover.exe`, `MoverAdmin.exe` and `settings.json` to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.
 
-One option to deliver the files using Workspace ONE is to combine all the Mover files into a single .zip file.
+One option to deliver the files using Workspace ONE is to combine all the Mover files into a single .zip file. In the downloaded .zip file, there is a PowerShell script `ZipCurrentDirectory.ps1` which will create .zip of current directory.
 
 You can then deploy this .zip file as a **Native Internal Application** in Workspace ONE UEM where the device is **currently** enrolled. After uploading the .zip file, use the following settings:
 
-### 1.️ Set the Install Command to be `Mover.exe`
+### 1.️ Set the Install Command to be `install.ps1`
 {: .no_toc }
-
-![install command](../assets/images/ws1install1.png)
 
 ### 2. Set the Uninstall Command to be `rm -force C:\Recovery\OEM\Mover`
 {: .no_toc }
 
-![uninstall command](../assets/images/ws1install2.png)
-
-### 3. Set the Uninstall Command as `file exists = C:\Recovery\OEM\Mover\Mover.exe`
+### 3. Set the Detection Criteria as `file exists = C:\Recovery\OEM\Mover\Mover.exe`
 {: .no_toc }
-
-![install criteria](../assets/images/ws1install3.png)
 
 >### ⚠️ Important
 >{: .no_toc }
-> A change from version 1.x of Mover, this no longer immediately initiates a migration. When setting the install command to be Mover.exe without any parameters, Mover will gracefully exit indicating a successful install.
+> A change from version 1.x of Mover, running install.ps1 no longer immediately initiates a migration.
 
 You should now set the Assignment Criteria and the Deployment to Automatic to ensure that the Mover migration files are staged ready for a migration at a later time.
 
@@ -152,15 +148,11 @@ If you do not have the **Intune Win32 Content Prep Tool** you can download it [h
 >{: .no_toc }
 > When using the tool, the **source** directory is the whole Mover directory. The **install command** will be Mover.exe.
 
-Now upload the .intunewin file to your Intune Management Console using the below settings:
-
-![install command](../assets/images/intuneinstall1.png)
-
-![install command](../assets/images/intuneinstall2.png)
+Now upload the .intunewin file to your Intune Management Console using similar settings to above.
 
 >### ⚠️ Important
 >{: .no_toc }
-> A change from version 1.x of Mover, this no longer immediately initiates a migration. When setting the install command to be Mover.exe without any parameters, Mover will gracefully exit indicating a successful install.
+> A change from version 1.x of Mover, running install.ps1 no longer immediately initiates a migration.
 
 You should assign this application as **required**, to ensure that the Mover files are staged to the device to prepare for migration at a later time.
 
@@ -181,12 +173,16 @@ Where Workspace ONE UEM is the Source MDM, you can issue this command as a **scr
 >    '--initiate-migration'
 >)`
 
+### ⚠️ Important
+{: .no_toc }
+If you choose to encrypt the settings, you MUST pass the passphrase in the command above by using `--passphrase <yourpassphrase>`
+
+
 
 ### ⚠️ Important
 {: .no_toc }
-Ensure you set the Execution Context to `System Context` 
+Ensure you set the Execution Context to `User Context with Admin Privileges` 
 
-![Powershell Script](../assets/images/MoverPowershellScript.png)
 ### ℹ️ Note
 {: .no_toc }
 Ensure you adjust the path in the command if you install Mover to a different location.
@@ -199,9 +195,11 @@ The script functionality within Intune does not allow for On-Demand triggering. 
 
 ### ⚠️ Important
 {: .no_toc }
-Ensure you set the Execution Context to `System Context`
+Ensure you set the Execution Context to `User Context with Admin Privileges`
 
-![Powershell Script](../assets/images/IntunePowershellScript.png)
+### ⚠️ Important
+{: .no_toc }
+If you choose to encrypt the settings, you MUST pass the passphrase in the command above by using `--passphrase <yourpassphrase>`
 
 ### ℹ️ Note
 {: .no_toc }

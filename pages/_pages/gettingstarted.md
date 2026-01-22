@@ -18,7 +18,7 @@ Migrating a device managed by Intune has currently been tested for devices enrol
 
 Below is a brief overview of the processes and tasks that Mover completes to migrate a device
 
-- A Workspace ONE Administrator downloads the **Mover** installer and installs it locally on _their_ PC to do the initial configuration.
+- A Workspace ONE Administrator downloads the **Mover** files and unzips it locally on _their_ PC to do the initial configuration.
 
 - Once installed, there will be two executables in the destination directory:
   ### Mover.exe
@@ -34,7 +34,7 @@ Below is a brief overview of the processes and tasks that Mover completes to mig
 
 - When the Administrator is ready to migrate the device, a remote command is sent to the device _(via script, logon script, scheduled task etc.)_ that calls:
   
-    > **"Mover_Admin.exe --initiate-migration"**
+    > **"MoverAdmin.exe --initiate-migration"**
 
 -   This will then prepare the endpoint for the migration, reboot the device and migrate the device from the source MDM to the destination MDM automatically.
 
@@ -64,6 +64,6 @@ Below is a brief overview of the processes and tasks that Mover completes to mig
 
 -   Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub
 -   End Users **do not** need to be Administrators on the devices being migrated
--   The **Mover_Admin.exe** process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task
+-   The **MoverAdmin.exe** process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task
 -   Connectivity to the target environment is **mandatory** and internet connectivity is required to download the AirwatchAgent.msi
 -   If you require a specific version of Intelligent Hub/Airwatch Agent, or if the endpoint _does not_ have internet access, ensure you place the required version of AirwatchAgent.msi in the root folder during installation.

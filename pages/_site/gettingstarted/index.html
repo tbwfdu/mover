@@ -67,7 +67,7 @@
 
 <ul>
   <li>
-    <p>A Workspace ONE Administrator downloads the <strong>Mover</strong> installer and installs it locally on <em>their</em> PC to do the initial configuration.</p>
+    <p>A Workspace ONE Administrator downloads the <strong>Mover</strong> files and unzips it locally on <em>their</em> PC to do the initial configuration.</p>
   </li>
   <li>Once installed, there will be two executables in the destination directory:
     <h3 id="moverexe">Mover.exe</h3>
@@ -91,7 +91,7 @@
     <p>When the Administrator is ready to migrate the device, a remote command is sent to the device <em>(via script, logon script, scheduled task etc.)</em> that calls:</p>
 
     <blockquote>
-      <p><strong>“Mover_Admin.exe –initiate-migration”</strong></p>
+      <p><strong>“MoverAdmin.exe –initiate-migration”</strong></p>
     </blockquote>
   </li>
   <li>This will then prepare the endpoint for the migration, reboot the device and migrate the device from the source MDM to the destination MDM automatically.</li>
@@ -128,7 +128,7 @@
 <ul>
   <li>Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub</li>
   <li>End Users <strong>do not</strong> need to be Administrators on the devices being migrated</li>
-  <li>The <strong>Mover_Admin.exe</strong> process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task</li>
+  <li>The <strong>MoverAdmin.exe</strong> process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task</li>
   <li>Connectivity to the target environment is <strong>mandatory</strong> and internet connectivity is required to download the AirwatchAgent.msi</li>
   <li>If you require a specific version of Intelligent Hub/Airwatch Agent, or if the endpoint <em>does not</em> have internet access, ensure you place the required version of AirwatchAgent.msi in the root folder during installation.</li>
 </ul>

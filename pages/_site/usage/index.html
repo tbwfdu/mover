@@ -82,15 +82,17 @@
 
 <h2 id="creating-the-settingsjson-config-file">Creating the settings.json Config File</h2>
 
-<p>New in Mover 2.0+, you can now use the Mover_Admin.exe file to generate and validate the configuration settings used during the Mover migration process.</p>
+<p>New in Mover 2.0+, you can now use the MoverAdmin.exe file to generate and validate the configuration settings used during the Mover migration process.</p>
 
-<p>Opening <strong>Mover_Admin.exe</strong> presents you with a series of screens that walks you through providing the required information and at the end will validate the correct combinations of settings and if correct will generate a settings.json file.</p>
+<p>Opening <strong>MoverAdmin.exe</strong> presents you with a series of screens that walks you through providing the required information and at the end will validate the correct combinations of settings and if correct will generate a settings.json file.</p>
+
+<p><img src="../assets/images/OpenOrCreate.png" alt="Alt text" title="Open or Create a settings file" /></p>
 
 <p><img src="../assets/images/MoverAdminEnvSettings.png" alt="Alt text" title="Mover Admin Screenshot" /></p>
 
 <blockquote>
   <h3 class="no_toc" id="️-important">⚠️ Important</h3>
-  <p><strong>Mover_Admin.exe</strong> also accepts arguments when being started.</p>
+  <p><strong>MoverAdmin.exe</strong> also accepts arguments when being started.</p>
 
   <p>You should <strong>only</strong> specify –initiate-migration as an argument when intending to start a real-world migration of the device</p>
 
@@ -290,25 +292,19 @@
 
 <p>After configuring your settings.json file, you now need to deliver <code class="language-plaintext highlighter-rouge">Mover.exe</code>, <code class="language-plaintext highlighter-rouge">MoverAdmin.exe</code> and <code class="language-plaintext highlighter-rouge">settings.json</code> to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.</p>
 
-<p>One option to deliver the files using Workspace ONE is to combine all the Mover files into a single .zip file.</p>
+<p>One option to deliver the files using Workspace ONE is to combine all the Mover files into a single .zip file. In the downloaded .zip file, there is a PowerShell script <code class="language-plaintext highlighter-rouge">ZipCurrentDirectory.ps1</code> which will create .zip of current directory.</p>
 
 <p>You can then deploy this .zip file as a <strong>Native Internal Application</strong> in Workspace ONE UEM where the device is <strong>currently</strong> enrolled. After uploading the .zip file, use the following settings:</p>
 
-<h3 class="no_toc" id="1️-set-the-install-command-to-be-moverexe">1.️ Set the Install Command to be <code class="language-plaintext highlighter-rouge">Mover.exe</code></h3>
-
-<p><img src="../assets/images/ws1install1.png" alt="install command" /></p>
+<h3 class="no_toc" id="1️-set-the-install-command-to-be-installps1">1.️ Set the Install Command to be <code class="language-plaintext highlighter-rouge">install.ps1</code></h3>
 
 <h3 class="no_toc" id="2-set-the-uninstall-command-to-be-rm--force-crecoveryoemmover">2. Set the Uninstall Command to be <code class="language-plaintext highlighter-rouge">rm -force C:\Recovery\OEM\Mover</code></h3>
 
-<p><img src="../assets/images/ws1install2.png" alt="uninstall command" /></p>
-
-<h3 class="no_toc" id="3-set-the-uninstall-command-as-file-exists--crecoveryoemmovermoverexe">3. Set the Uninstall Command as <code class="language-plaintext highlighter-rouge">file exists = C:\Recovery\OEM\Mover\Mover.exe</code></h3>
-
-<p><img src="../assets/images/ws1install3.png" alt="install criteria" /></p>
+<h3 class="no_toc" id="3-set-the-detection-criteria-as-file-exists--crecoveryoemmovermoverexe">3. Set the Detection Criteria as <code class="language-plaintext highlighter-rouge">file exists = C:\Recovery\OEM\Mover\Mover.exe</code></h3>
 
 <blockquote>
   <h3 class="no_toc" id="️-important-1">⚠️ Important</h3>
-  <p>A change from version 1.x of Mover, this no longer immediately initiates a migration. When setting the install command to be Mover.exe without any parameters, Mover will gracefully exit indicating a successful install.</p>
+  <p>A change from version 1.x of Mover, running install.ps1 no longer immediately initiates a migration.</p>
 </blockquote>
 
 <p>You should now set the Assignment Criteria and the Deployment to Automatic to ensure that the Mover migration files are staged ready for a migration at a later time.</p>
@@ -326,15 +322,11 @@
   <p>When using the tool, the <strong>source</strong> directory is the whole Mover directory. The <strong>install command</strong> will be Mover.exe.</p>
 </blockquote>
 
-<p>Now upload the .intunewin file to your Intune Management Console using the below settings:</p>
-
-<p><img src="../assets/images/intuneinstall1.png" alt="install command" /></p>
-
-<p><img src="../assets/images/intuneinstall2.png" alt="install command" /></p>
+<p>Now upload the .intunewin file to your Intune Management Console using similar settings to above.</p>
 
 <blockquote>
   <h3 class="no_toc" id="️-important-3">⚠️ Important</h3>
-  <p>A change from version 1.x of Mover, this no longer immediately initiates a migration. When setting the install command to be Mover.exe without any parameters, Mover will gracefully exit indicating a successful install.</p>
+  <p>A change from version 1.x of Mover, running install.ps1 no longer immediately initiates a migration.</p>
 </blockquote>
 
 <p>You should assign this application as <strong>required</strong>, to ensure that the Mover files are staged to the device to prepare for migration at a later time.</p>
@@ -357,9 +349,11 @@
 </blockquote>
 
 <h3 class="no_toc" id="️-important-4">⚠️ Important</h3>
-<p>Ensure you set the Execution Context to <code class="language-plaintext highlighter-rouge">System Context</code></p>
+<p>If you choose to encrypt the settings, you MUST pass the passphrase in the command above by using <code class="language-plaintext highlighter-rouge">--passphrase &lt;yourpassphrase&gt;</code></p>
 
-<p><img src="../assets/images/MoverPowershellScript.png" alt="Powershell Script" /></p>
+<h3 class="no_toc" id="️-important-5">⚠️ Important</h3>
+<p>Ensure you set the Execution Context to <code class="language-plaintext highlighter-rouge">User Context with Admin Privileges</code></p>
+
 <h3 class="no_toc" id="ℹ️-note">ℹ️ Note</h3>
 <p>Ensure you adjust the path in the command if you install Mover to a different location.</p>
 
@@ -369,10 +363,11 @@
 
 <p>The script functionality within Intune does not allow for On-Demand triggering. Given this, you can still push the same script as above but it will process whenever the device receives the command. You can use the ‘Platform Scripts’ function and assign it to the devices you want to migrate. This will immediately start the migration.</p>
 
-<h3 class="no_toc" id="️-important-5">⚠️ Important</h3>
-<p>Ensure you set the Execution Context to <code class="language-plaintext highlighter-rouge">System Context</code></p>
+<h3 class="no_toc" id="️-important-6">⚠️ Important</h3>
+<p>Ensure you set the Execution Context to <code class="language-plaintext highlighter-rouge">User Context with Admin Privileges</code></p>
 
-<p><img src="../assets/images/IntunePowershellScript.png" alt="Powershell Script" /></p>
+<h3 class="no_toc" id="️-important-7">⚠️ Important</h3>
+<p>If you choose to encrypt the settings, you MUST pass the passphrase in the command above by using <code class="language-plaintext highlighter-rouge">--passphrase &lt;yourpassphrase&gt;</code></p>
 
 <h3 class="no_toc" id="ℹ️-note-1">ℹ️ Note</h3>
 <p>Ensure you adjust the path in the command if you install Mover to a different location.</p>
