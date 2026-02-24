@@ -26,15 +26,17 @@ Below is a brief overview of the processes and tasks that Mover completes to mig
   
   ### MoverAdmin.exe
     - Used by the Workspace ONE Administrator to generate the settings.json file used for migration
+
+  ### MoverHelper.exe
     - Called remotely by the source MDM and configures the device **to be migrated** with the settings in the settings.json file created by the Administrator  
   <br>
 
-- A Workspace ONE Administrator then deploys **Mover** (both executables + settings.json) to the Windows endpoint to be migrated.
+- A Workspace ONE Administrator then deploys **Mover.exe** & **MoverHelper.exe** (two executables + settings.json) to the Windows endpoint to be migrated.
   - This can be done at any time to prepare the device for the migration.
 
 - When the Administrator is ready to migrate the device, a remote command is sent to the device _(via script, logon script, scheduled task etc.)_ that calls:
   
-    > **"MoverAdmin.exe --initiate-migration"**
+    > **"MoverHelper.exe --initiate-migration"**
 
 -   This will then prepare the endpoint for the migration, reboot the device and migrate the device from the source MDM to the destination MDM automatically.
 
@@ -58,12 +60,12 @@ Below is a brief overview of the processes and tasks that Mover completes to mig
 -   Administrator account for the **destination** **Workspace ONE Environment**, with permissions to manage staging accounts and devices.
 -   Staging account credentials for the **destination** **Workspace ONE UEM** environment
 -   **Destination** environment Organization Group ID & Device Services URL (eg. [https://ds1234.awmdm.com)](https://ds1234.awmdm.com))
--   Intune permissions to deploy **Mover** on the device using the Win32 App deployment capabilities, or if completing manually, the ability to run mover_install.exe as an Administrator on the device.
+-   Intune permissions to deploy **Mover** on the device using the Win32 App deployment capabilities, or if completing manually, the ability to run MoverHelper.exe as an Administrator on the device.
 
 ## Device Requirements
 
 -   Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub
 -   End Users **do not** need to be Administrators on the devices being migrated
--   The **MoverAdmin.exe** process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task
+-   The **MoverHelper.exe** process must run as an Administrator as it configures the migration Administrator account on the device and sets up the Mover interface
 -   Connectivity to the target environment is **mandatory** and internet connectivity is required to download the AirwatchAgent.msi
 -   If you require a specific version of Intelligent Hub/Airwatch Agent, or if the endpoint _does not_ have internet access, ensure you place the required version of AirwatchAgent.msi in the root folder during installation.

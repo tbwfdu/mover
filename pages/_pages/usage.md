@@ -26,16 +26,6 @@ Opening **MoverAdmin.exe** presents you with a series of screens that walks you 
 
 ![Alt text](../assets/images/MoverAdminEnvSettings.png "Mover Admin Screenshot")
 
->### ⚠️ Important
->{: .no_toc }
-> **MoverAdmin.exe** also accepts arguments when being started. 
-> 
-> You should **only** specify --initiate-migration as an argument when intending to start a real-world migration of the device
->
-> **and**
-> 
-> You should **only** specify --revert as an argument when intending to revert any device migration configuration from a device.
-
 <br>
 ### Environment Settings Options
 
@@ -49,7 +39,7 @@ This is the initial page where you specify the environment details of the **dest
 | Staging Password                  | The password for the above account                                                         |                                                                                                                    |
 | Enrollment Org Group              | The GroupID value of the Organization Group where the devices will enroll                  |                                                                                                                    |
 | Workspace ONE Device Services URL | The "ds" URL of your UEM Environment  <br/> (eg. `https://ds1234.awmdm.com`)               | Ensure you use `dsXXXX` not _`cn`_ or _`as`_                                                                       |
-| Source MDM                        | Which MDM the device is currently enrolled in                                              | This presents different configuration options and also will perform different actions on the device being migrated |
+| Source MDM                        | Which MDM the device is currently enrolled in                                              | This presents different configuration options and also will perform different actions on the device being migrated. <br><br> **Note:** There is now a _Generic MDM_ option. This allows you to specify an unenrollment script file name that will be executed on the device before to remove the Source MDM Enrollment configuration. This script should remove the OMA-DM accounts from the registry and any MDM Specific agents. It also *must* return 0 to the command line to ensure the migration process continues.  |
 
 
 <br>
@@ -115,7 +105,9 @@ Similarly, if you open MoverAdmin and there's an existing settings.json file, it
 
 ### Workspace ONE UEM
 
-After configuring your settings.json file, you now need to deliver `Mover.exe`, `MoverAdmin.exe` and `settings.json` to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.
+After configuring your settings.json file, you now need to deliver `Mover.exe`, `MoverHelper.exe` and `settings.json` to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.
+
+You do not need to deliver `MoverAdmin.exe` to the device as it is only used on the Administrator PC to generate the settings.json file.
 
 One option to deliver the files using Workspace ONE is to combine all the Mover files into a single .zip file. In the downloaded .zip file, there is a PowerShell script `ZipCurrentDirectory.ps1` which will create .zip of current directory.
 
@@ -124,10 +116,10 @@ You can then deploy this .zip file as a **Native Internal Application** in Works
 ### 1.️ Set the Install Command to be `install.ps1`
 {: .no_toc }
 
-### 2. Set the Uninstall Command to be `rm -force C:\Recovery\OEM\Mover`
+### 2. Set the Uninstall Command to be `rm -force C:\Temp\Mover`
 {: .no_toc }
 
-### 3. Set the Detection Criteria as `file exists = C:\Recovery\OEM\Mover\Mover.exe`
+### 3. Set the Detection Criteria as `file exists = C:\Temp\Mover\Mover.exe`
 {: .no_toc }
 
 >### ⚠️ Important
@@ -138,7 +130,9 @@ You should now set the Assignment Criteria and the Deployment to Automatic to en
 
 ### Intune
 
-After configuring your settings.json file, you now need to deliver `Mover.exe`, `MoverAdmin.exe` and `settings.json` to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.
+After configuring your settings.json file, you now need to deliver `Mover.exe`, `MoverHelper.exe` and `settings.json` to the devices to be migrated. These files can be stored anywhere on the device, however it is recommended to store these somewhere that Standard Users cannot access for security purposes.
+
+You do not need to deliver `MoverAdmin.exe` to the device as it is only used on the Administrator PC to generate the settings.json file.
 
 To proceed with preparing the migration from Intune, combine all the Mover files into a single directory.
 
@@ -161,7 +155,7 @@ You should assign this application as **required**, to ensure that the Mover fil
 
 In order to initiate a migration on the device, the following command needs to be issued **to the device**:
 
-`MoverAdmin.exe --initiate-migration`
+`MoverHelper.exe --initiate-migration`
 
 
 ### Workspace ONE UEM
@@ -169,7 +163,7 @@ In order to initiate a migration on the device, the following command needs to b
 Where Workspace ONE UEM is the Source MDM, you can issue this command as a **script** and optionally use this script inside a UEM Workflow. To ensure that the Workspace ONE UEM Managed device receives the command correctly, can you use the below Powershell code as the contents of the script:
 
 
->`Start-Process "C:\OEM\Recovery\Mover\MoverAdmin.exe" -ArgumentList @(
+>`Start-Process "C:\Temp\Mover\MoverHelper.exe" -ArgumentList @(
 >    '--initiate-migration'
 >)`
 
@@ -207,6 +201,6 @@ Ensure you adjust the path in the command if you install Mover to a different lo
 
 **The other option** for Intune would be to change the 'Install Command' in the Intune Deployment section **above** to be:
 
-`MoverAdmin.exe --initiate-migration`
+`MoverHelper.exe --initiate-migration`
 
 This will immediately trigger the migration process upon installation of the Mover.intunewin package.
