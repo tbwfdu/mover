@@ -1,191 +1,115 @@
+# Mover
 
-# Mover - Workspace ONE Migration Tool for Windows  
+**Automated MDM migration for Windows devices, to Workspace ONE UEM.**
 
-# Overview
-Mover is a tool for Workspace ONE Administrators that can be configured to facilitate an automated migration of a Windows device from either between two different Workspace ONE UEM Environments or have the same device re-enroll back into the _same_ UEM environment for user account/Directory changes and/or migrations.
+Mover helps Workspace ONE administrators move Windows 10/11 devices:
 
-**Mover now also supports migrating a Windows device managed by Microsoft Intune to Workspace ONE.**
+- from **Microsoft Intune** to Workspace ONE UEM (the device stays joined to Entra ID),
+- from one **Workspace ONE UEM** environment to another, or
+- back into the **same** UEM environment, for example after a user or directory change.
 
-Migrating a device managed by Intune has currently been tested for devices enrolled into Intune using OOBE. This process also leaves the device joined to **Azure Active Directory** and will remove all **Intune** CSPs and configurations. Applications that are deployed via Intune **are not** removed when migrating, as this is a limitation of Intune's software deployment capabilities. As is in Microsoft's documentation, if you want to remove applications before migration you must uninstall them first.  
+Mover 2.x also has a **Generic MDM** source option. It runs an unenrollment script you supply to remove the source MDM, so other MDMs can be migrated.
 
-  
+[**Download the latest release**](https://github.com/tbwfdu/mover/releases) · [Documentation](pages/_pages) · [Demo video](https://youtu.be/k-Iyt-hFRuc)
 
-# High Level Process  
+---
 
-Below is a brief overview of the processes and tasks that Mover completes to migrate a device
+## What's in Mover 2.x
 
--   A Workspace ONE Administrator deploys **Mover** to the Windows endpoint to be migrated. This can be done manually, or via application management using UEM etc.
--   After the **Mover** executables are on the device, a process runs the **mover_install.exe** binary which:
+Mover 2.x has three executables:
 
--   Enables the “Administrator” account on the PC
--   Sets a complex 15 char. password (not saved or stored anywhere in clear text), which is used by the autologon.exe process.
+| Executable | Runs on | Purpose |
+|:--|:--|:--|
+| `MoverAdmin.exe` | The administrator's PC | A guided app that creates and validates the `settings.json` used for migration. |
+| `MoverHelper.exe` | The device being migrated | Prepares the device and starts the migration when it receives `--initiate-migration`. |
+| `Mover.exe` | The device being migrated | The full-screen shell that runs the migration and shows progress. |
 
--   This is stored in an area of the Registry that is **only** accessible to the SYSTEM account.
+**Changes from 1.x:**
 
--   Moves all the **Mover** files to C:\Recovery\OEM\Mover
--   Creates a scheduled task for the **Administrator** account, which triggers at logon, that calls the **migrate.exe** file from C:\Recovery\OEM\Mover
--   Sets the Administrator account to **auto logon**
--   Reboots the PC and starts the next phase.
+- `settings.json` is generated and validated by **MoverAdmin**. You no longer edit `appsettings.json` by hand.
+- **Staging and migrating are separate steps.** Deploying the Mover files no longer starts a migration. You start it later by running `MoverHelper.exe --initiate-migration`.
+- The migration account can be a **new local administrator** (default username `mover`), the **built-in Administrator**, or an **existing admin account you specify**.
+- Optional **settings encryption**. If you encrypt `settings.json`, pass `--passphrase <yourpassphrase>` when you initiate the migration.
+- **Lockdown mode**, **minimal UI mode** and an optional **post-migration PowerShell script**.
+- Options to **wait for Omnissa Tunnel and Offline Domain Join** before a migration counts as complete.
+- A **localized MoverAdmin UI**: English, French, German, Dutch and Spanish.
 
--   The **Administrator** account **automatically logs in** and the task triggers.
--   The **migrate.exe** application reads its config from the **appsettings.json** file in the same directory, which includes the staging account details, server address, OG Name as well as parameters for the app.
+## How it works
 
--   You can force the app the run in **fullscreen** (default is **true**, _recommended_)
+1. **Configure.** Run `MoverAdmin.exe` and enter the destination environment, device, migration and post-migration options. MoverAdmin validates the combination and writes `settings.json`.
+2. **Stage.** Deploy `Mover.exe`, `MoverHelper.exe` and `settings.json` to the devices (see [Deployment](#deployment)). Do **not** deploy `MoverAdmin.exe`.
+3. **Initiate.** When you're ready, send this command to the device:
 
--   The **appsettings.json** also has a MdmSource parameter that is used to determine which migration scenario processes to follow.
+   ```powershell
+   Start-Process "C:\Temp\Mover\MoverHelper.exe" -ArgumentList @('--initiate-migration')
+   ```
 
-You can also specify if you want to allow the Application to be able to be exited by the user (recommended to set **allow_exit = false** to stop interference with the process)
+4. **Prepare.** `MoverHelper` configures the device and reboots it into the Mover shell.
+5. **Migrate.** `Mover.exe` unenrolls the device from the source MDM, downloads the Intelligent Hub (`AirwatchAgent.msi`) and enrolls the device in the destination Workspace ONE UEM environment.
+6. **Revert.** After checking that enrollment succeeded, Mover reverts every preparation change. The user then signs in to Intelligent Hub to finish device assignment.
 
--   **Mover** will then download the latest AirwatchAgent.msi if **download_agent = true**, or will look for the agent in the same directory if **download_agent = false.**
--   It will then proceed with validation checks, disable Bitlocker, edit the install manifests to ensure that existing Applications do not uninstall(useful for re-enrollment into the same environment), uninstalls and reinstalls the agent with commandline provisioning.
+### What Mover changes on the device during migration
 
-After verifying that re-enrollment has successfully completed, **Mover** will re-enable Bitlocker, **disable** the Administrator account, and cleanup the scheduled migration task.
+These changes are temporary, and Mover reverts them when migration succeeds.
 
-The device is now ready for the end user to log in to and complete the device reassignment process by authenticating with their credentials in Intelligent Hub.
+- Creates or enables a local administrator account (optionally with a random 15-character password) and sets it to auto-logon
+- Suspends BitLocker and removes any logon banner
+- Sets `Mover.exe` as the shell, so the device is in a kiosk-like state
+- Removes Log off, Power options and Task Manager from the Ctrl+Alt+Del screen, and enables keyboard filtering on Pro/Enterprise
+- Disables UAC for the duration of the migration
+- Runs Mover full screen and stops it being closed (configurable)
 
-# Downloads
-The latest version of Mover is [available here](https://github.com/tbwfdu/mover/releases)
+See the [FAQ](pages/_pages/faq.md) for more detail.
 
+## Requirements
 
+**Destination (Workspace ONE UEM)**
 
-# Environment Requirements  
+- A staging account configured for single-user staging
+- The Organization Group ID where devices will enroll
+- The Device Services URL (`https://dsXXXX.awmdm.com`; use `ds`, not `cn` or `as`)
 
-> [!NOTE]
-> If migrating from **Workspace ONE UEM** to **Workspace ONE UEM**:
->
--   Workspace ONE UEM Administrator accounts for both the **source** and **destination** environments, with permissions to manage staging accounts and devices
+**Source MDM**
 
--   The _source_ Workspace ONE UEM Administrator account isn't _necessary_ but is useful for ensuring a successful migration.
+- *Workspace ONE UEM:* administrator access to the source and destination environments. The source account isn't strictly required but is recommended.
+- *Intune:* administrator access to Intune and permission to deploy Win32 apps, or the ability to run `MoverHelper.exe` as an administrator by hand.
+- *Generic MDM:* an unenrollment script that removes the OMA-DM accounts and any MDM-specific agents, and returns exit code `0`.
 
--   Staging account credentials for the **destination Workspace ONE UEM** environment
--   **Workspace ONE UEM Destination** environment Organization Group ID & Device Services URL (eg. [https://ds1234.awmdm.com)](https://ds1234.awmdm.com))
--   Ability to deploy **Mover** on the device, or if completing manually, the ability to run mover_install.exe as an Administrator on the device
-  
-> [!NOTE]
-> If migrating from **Microsoft Intune** to **Workspace ONE UEM**:
->
--   Administrator account for the **source** **Intune** Management Console.
--   Administrator account for the **destination** **Workspace ONE Environment**, with permissions to manage staging accounts and devices.
--   Staging account credentials for the **destination** **Workspace ONE UEM** environment
--   **Destination** environment Organization Group ID & Device Services URL (eg. [https://ds1234.awmdm.com)](https://ds1234.awmdm.com))
--   Intune permissions to deploy **Mover** on the device using the Win32 App deployment capabilities, or if completing manually, the ability to run mover_install.exe as an Administrator on the device.
+**Devices**
 
-  # Device Requirements
-
-
--   Windows 10 or 11 Devices that can run supported versions of Workspace ONE Intelligent Hub
--   End Users **do not** need to be Administrators on the devices being migrated
--   The **mover_install.exe** process must run as an Administrator as it enables the local Administrator account on the device and schedules the migration task
--   Connectivity to the target environment is **mandatory** and internet connectivity is required to download the AirwatchAgent.msi
-
--   If you require a specific version of Intelligent Hub/Airwatch Agent, or if the endpoint _does not_ have internet access, ensure you place the required version of AirwatchAgent.msi in the root folder during installation.
-
--   The **Administrator** account on the device to be migrated **must exist** and **cannot** have been renamed etc.
-
-# Usage Instructions
-
-The interface is customizable by editing the "UI" section of the **appsettings.json** file (see below).  
-
-![mover customization](https://raw.githubusercontent.com/tbwfdu/mover/main/images/mover.png)
-
-Customers can also add their own **logo.png** file to the root directory to add their company logo, or remove it completely.
-
-
-
-## Pre-Deployment Configuration
-
-Before deploying the files to the endpoint, or running the migrate_install.exe **adjust** the included **appsettings.json** file and update the following parameters:
-
-![appsettings customization](https://raw.githubusercontent.com/tbwfdu/mover/main/images/appsettings.png)
-
-Under “**Settings**”:
-
-> [!NOTE]
-> These are all for the destination environment.
-
-**Username:** Replace with your staging account username
-
-**Password:** Replace with your staging account password
-
-**OrgGroup:** Enter your OrgGroupID
-
-**Server:** Enter your Device Services URL (including https:// )
-
-**Fullscreen:** True forces Mover to take over the full screen of the device and disables the ability to minimize the application
-
-**AllowExit:** If set to false, Mover is not allowed to exit and will ignore the close button presses
-
-**RebootTime:** Not currently used
-
-**MdmSource:** Specifies the source MDM to determine how to migrate the device
-
-**RebootOnCompletion:**   Specifies if the device should reboot once migration (usually always true)
-
-**ForceCleanup:** (NEW)  If set to true, Mover will remove all registry references and scheduled tasks as if the device has never been migrated. Useful for when a device fails to migrate successfully or you need to migrate a subsequent time
-
-**AdminAccountDetails:**  (NEW)
-
-  **IsRenamed:**   If set to true, allows you to specify the Administrator username and password (below). Useful if you are renaming the 'Administrator' account on the Windows endpoint, or are unable to enable it. If true, you must set the AdminUsername below.
-
-  **UseExistingPassword:**   If true, Mover will not generate a new random password for the Administrator account. If setting this as true you must configure the AdminPassword below.
-
-  **AdminUsername:**  The username to the Admin Account to autologin as.
-
-  **AdminPassword:**   The passwordto the Admin Account to autologin as.
-
-  **DisableRenamedAccountAfterMigration:**   Whether or not to disable the account specified above. This allows you to use a renamed account (which may or may not be disabled), have Mover enable it for migration and then disable it again after migration.
-
-_You can also adjust the text that is displayed in the UI in the same **appsettings.json** file._
-
-If you want to **remove** the VMware logo, delete the logo.png file
-
-If you want to **add** a different company logo, add a new file called logo.png
+- Windows 10 or 11 that can run a supported version of Workspace ONE Intelligent Hub
+- Connectivity to the destination environment. Internet access is needed to download `AirwatchAgent.msi`. Without it, place the version you want in the Mover folder.
+- `MoverHelper.exe` must run as an administrator. End users don't need to be administrators.
 
 ## Deployment
 
-### Workspace ONE UEM
+Deliver `Mover.exe`, `MoverHelper.exe` and `settings.json` to each device. Choose a location standard users can't write to; the examples use `C:\Temp\Mover`. The release includes `ZipCurrentDirectory.ps1`, which zips the current directory for deployment.
 
-Once you have configured the **appsettings.json** file, combine all the Mover files into a single .zip file.
+- **Workspace ONE UEM:** deploy the zip as a *Native Internal Application* with install command `install.ps1`, uninstall command `rm -force C:\Temp\Mover`, and detection `file exists = C:\Temp\Mover\Mover.exe`. Set the assignment to automatic.
+- **Intune:** package the folder with the [Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool) and assign it as *required*.
 
-You can then deploy this .zip file as a **Native Internal Application** in Workspace ONE UEM where the device is **currently** enrolled. After uploading the .zip file, use the following settings:
-> [!NOTE]
-> _Set the Install Command to be mover_install.exe_
+To start migrations, run `MoverHelper.exe --initiate-migration` on the device. Use a UEM script or workflow with the execution context set to *User Context with Admin Privileges*. In Intune, use a Platform Script, or set the package install command to `MoverHelper.exe --initiate-migration` to start the migration on install.
 
-![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install1.png)
+The full step-by-step guide is in [Usage](pages/_pages/usage.md).
 
-> [!NOTE]
-> _Set the Uninstall Command to be rm -force C:\Recovery\OEM\Mover_
+## Documentation
 
-![uninstall command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install2.png)
+The documentation is a Jekyll site in [`pages/`](pages):
 
-> [!NOTE]
-> _Set the Install Complete criteria to be file exists = C:\Recovery\OEM\Mover\mover.exe_
+- [Getting Started](pages/_pages/gettingstarted.md): overview, process and requirements
+- [Usage](pages/_pages/usage.md): MoverAdmin settings reference, validation, deployment and initiating a migration
+- [FAQ](pages/_pages/faq.md): what configuration is applied to the device
 
-![install criteria](https://raw.githubusercontent.com/tbwfdu/mover/main/images/ws1install3.png)
+To preview it locally, run `bundle install` and `bundle exec jekyll serve` in `pages/`.
 
-> [!WARNING]
-> As soon as you assign this application and the device receives the installation command, **the device will start the migration immediately**.
+## Limitations
 
-### Intune
+- Applications deployed by Intune are **not** removed during migration (an Intune limitation). Uninstall them first if needed.
+- Intune migrations have been tested with devices enrolled via OOBE.
+- Starting a migration on a device that is already staged requires `MoverHelper.exe --initiate-migration`. Running the installer alone no longer does it.
 
-Once you have configured the appsettings.json file, combine all the Mover files into a single directory.
+## Support and license
 
-If you do not have the **Intune Win32 Content Prep Tool** you can download it [here.](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool) This is used for creating the .intunewin file for uploading to the Intune console.
+Mover is a community project and is not an officially supported product. Report issues on the [GitHub issue tracker](https://github.com/tbwfdu/mover/issues).
 
-> [!IMPORTANT]
-> When using the tool, the **source** directory is the whole Mover directory. The **install command** will be mover_install.exe.
-
-Now upload the .intunewin file to your Intune Management Console using the below settings:
-
-![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/intuneinstall1.png)
-
-![install command](https://raw.githubusercontent.com/tbwfdu/mover/main/images/intuneinstall2.png)
-
-> [!WARNING]
-> Take note of your assignment settings here. The above example sets this as **Available** which shows it in the Catalog but the user needs to "install" it to initate the migration. If you want to control the migration, add the devices to be migrated to the "required" section in phases etc.
-
-As soon as you assign this application as **required**, or when the user initiates the install of the App, once the device receives the installation command, **the device will start the migration immediately**.
-
-## Migration Demonstration
-
-https://youtu.be/k-Iyt-hFRuc
+Released under the [MIT License](LICENSE).
