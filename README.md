@@ -10,7 +10,7 @@ Mover helps Workspace ONE administrators move Windows 10/11 devices:
 
 Mover 2.x also has a **Generic MDM** source option. It runs an unenrollment script you supply to remove the source MDM, so other MDMs can be migrated.
 
-[**Download the latest release**](https://github.com/tbwfdu/mover/releases) · [Documentation](pages/_pages) · [Demo video](https://youtu.be/k-Iyt-hFRuc)
+[**Download the latest release**](https://github.com/tbwfdu/mover/releases) · [Documentation](https://dropbearlabs.net/mover/) · [Demo video](https://youtu.be/k-Iyt-hFRuc)
 
 ---
 
@@ -59,7 +59,7 @@ These changes are temporary, and Mover reverts them when migration succeeds.
 - Disables UAC for the duration of the migration
 - Runs Mover full screen and stops it being closed (configurable)
 
-See the [FAQ](pages/_pages/faq.md) for more detail.
+See the [FAQ](https://dropbearlabs.net/mover/faq/) for more detail.
 
 ## Requirements
 
@@ -90,15 +90,15 @@ Deliver `Mover.exe`, `MoverHelper.exe` and `settings.json` to each device. Choos
 
 To start migrations, run `MoverHelper.exe --initiate-migration` on the device. Use a UEM script or workflow with the execution context set to *User Context with Admin Privileges*. In Intune, use a Platform Script, or set the package install command to `MoverHelper.exe --initiate-migration` to start the migration on install.
 
-The full step-by-step guide is in [Usage](pages/_pages/usage.md).
+The full step-by-step guide is in [Usage](https://dropbearlabs.net/mover/usage/).
 
 ## Documentation
 
-The documentation is a Jekyll site in [`pages/`](pages):
+The documentation is published at [dropbearlabs.net/mover](https://dropbearlabs.net/mover/). Its source is the Jekyll site in [`pages/`](pages):
 
-- [Getting Started](pages/_pages/gettingstarted.md): overview, process and requirements
-- [Usage](pages/_pages/usage.md): MoverAdmin settings reference, validation, deployment and initiating a migration
-- [FAQ](pages/_pages/faq.md): what configuration is applied to the device
+- [Getting Started](https://dropbearlabs.net/mover/gettingstarted/): overview, process and requirements
+- [Usage](https://dropbearlabs.net/mover/usage/): MoverAdmin settings reference, validation, deployment and initiating a migration
+- [FAQ](https://dropbearlabs.net/mover/faq/): what configuration is applied to the device
 
 To preview it locally, run `bundle install` and `bundle exec jekyll serve` in `pages/`.
 
